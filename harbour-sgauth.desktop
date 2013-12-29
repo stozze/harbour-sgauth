@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Name=SGAuth
+Icon=harbour-sgauth
+Exec=harbour-sgauth
+
