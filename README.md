@@ -9,5 +9,5 @@ Feel free to report issues or contribute by sending pull-requests.
 Special thanks to:
 ------------------
 Andrea Grandi for his work on https://github.com/andreagrandi/QGoogleAuth  
-SGAuth-icon comes from from VisualPharm (http://www.visualpharm.com)  
+SGAuth-icon comes from VisualPharm (http://www.visualpharm.com)  
 
