@@ -18,19 +18,22 @@ SOURCES += \
 
 OTHER_FILES += \
     qml/cover/CoverPage.qml \
-    qml/pages/FirstPage.qml \
     qml/dialogs/AddNewAccountDialog.qml \
     qml/dialogs/EditAccountDialog.qml \
     qml/pages/AboutPage.qml \
     harbour-sgauth.desktop \
     rpm/harbour-sgauth.yaml \
     rpm/harbour-sgauth.spec \
-    qml/components/fi.storbjork.harbour-sgauth.QGoogleAuthStorage.js \
     qml/harbour-sgauth.qml \
-    harbour-sgauth.png
+    harbour-sgauth.png \
+    qml/components/harbour.sgauth.QGoogleAuthStorage.js \
+    qml/pages/MainPage.qml
 
 HEADERS += \
     src/qgoogleauth.h \
     src/hmac.h \
     src/base32.h
+
+RESOURCES += \
+    harbour-sgauth.qrc
 

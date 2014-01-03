@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import fi.storbjork.harbour.sgauth.QGoogleAuth 1.0
-import "../components/fi.storbjork.harbour-sgauth.QGoogleAuthStorage.js" as QGoogleAuthStorage
+import harbour.sgauth.QGoogleAuth 1.0
+import "../components/harbour.sgauth.QGoogleAuthStorage.js" as QGoogleAuthStorage
 
 Page {
     id: page

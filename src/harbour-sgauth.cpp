@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
-    qmlRegisterSingletonType<QGoogleAuth>("fi.storbjork.harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
+    qmlRegisterSingletonType<QGoogleAuth>("harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-sgauth.qml"));
     view->show();
