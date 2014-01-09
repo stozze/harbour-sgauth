@@ -4,6 +4,7 @@ import "pages"
 
 ApplicationWindow
 {
+    id: appwindow
     initialPage: Component { MainPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
 }
