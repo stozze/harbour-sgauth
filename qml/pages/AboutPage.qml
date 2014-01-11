@@ -11,7 +11,7 @@ Page {
 
         PageHeader {
             id: header
-            title: "About SGAuth v0.2-1"
+            title: "About SGAuth v0.2-2"
         }
 
         Text {

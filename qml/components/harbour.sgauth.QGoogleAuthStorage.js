@@ -1,12 +1,17 @@
 .import QtQuick.LocalStorage 2.0 as Sql
 
 var currentDatabase = null;
+var useTestDatabase = false;
 
 function getDatabase() {
     if (currentDatabase !== null)
         return currentDatabase;
 
-    var db = Sql.LocalStorage.openDatabaseSync("fi.storbjork.harbour-sgauth.QGoogleAuthStorage", "1.0", "Storage for account settings", 100000);
+    var dbName = "fi.storbjork.harbour-sgauth.QGoogleAuthStorage";
+    if (useTestDatabase)
+        dbName = "fi.storbjork.harbour-sgauth.QGoogleAuthStorage-testing";
+
+    var db = Sql.LocalStorage.openDatabaseSync(dbName, "1.0", "Storage for account settings", 100000);
 
     // Create table
     db.transaction(function(tx) {

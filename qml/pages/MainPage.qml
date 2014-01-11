@@ -35,8 +35,15 @@ Page {
             accountsWrapper.visible = false
     }
 
+    // List model for accounts
+    ListModel {
+        id: accountsModel
+    }
+
     SilicaFlickable {
         anchors.fill: parent
+        clip: true
+        interactive: !accountsListView.flicking
 
         // Pulldown menu
         PullDownMenu {
@@ -66,32 +73,29 @@ Page {
             }
         }
 
-        contentHeight: column.height
+        PageHeader {
+            id: pageHeader
+            title: "SGAuth"
+        }
 
         Column {
             id: column
-            width: page.width
-            spacing: Theme.paddingLarge
-
-            PageHeader {
-                id: header
-                title: "SGAuth"
-            }
+            width: parent.width - Theme.paddingLarge*2
+            x: Theme.paddingLarge
+            anchors.top: pageHeader.bottom
 
             Text {
                 id: noAccountsWrapper
                 text: "No accounts found, pull down to add new accounts."
                 color: Theme.secondaryColor
                 visible: !accountsWrapper.visible
-                x: Theme.paddingLarge
-                width: column.width - Theme.paddingLarge * 2
+                width: parent.width
                 wrapMode: Text.WordWrap
             }
 
             Column {
                 id: accountsWrapper
-                x: Theme.paddingLarge
-                width: column.width - Theme.paddingLarge * 2
+                width: parent.width
                 visible: false
 
                 ProgressBar {
@@ -124,113 +128,121 @@ Page {
                     height: Theme.paddingLarge
                     color: "transparent"
                 }
+            }
+        }
 
-                SilicaListView {
-                    id: accountsListView
-                    x: -Theme.paddingLarge
-                    width: parent.width + Theme.paddingLarge * 2
-                    model: ListModel {
-                        id: accountsModel
+        SilicaListView {
+            id: accountsListView
+            clip: true
+            interactive: true
+            boundsBehavior: Flickable.StopAtBounds
+            anchors.top: column.bottom
+            anchors.bottom: parent.bottom
+            width: parent.width
+            model: accountsModel
+
+            delegate: ListItem {
+                id: accountsDelegate
+                width: parent.width
+                menu: contextMenu
+
+                ListView.onRemove: animateRemoval(accountsDelegate)
+
+                // Remove account function
+                function remove() {
+                    remorseAction("Deleting " + accountName, function() {
+                        QGoogleAuthStorage.removeAccount(accountId)
+
+                        page.refreshPasscodes();
+                    })
+                }
+
+                // Edit account function
+                function edit() {
+                    var editDialog = pageStack.push(Qt.resolvedUrl("../dialogs/EditAccountDialog.qml"), {"editAccountName": accountName, "editAccountKey": accountKey});
+
+                    editDialog.accepted.connect(function() {
+                        QGoogleAuthStorage.updateAccount(accountId, editDialog.editAccountName, editDialog.editAccountKey)
+
+                        accountsModel.setProperty(index, "accountName", editDialog.editAccountName);
+                        accountsModel.setProperty(index, "accountKey", editDialog.editAccountKey);
+
+                        page.refreshPasscodes()
+                    })
+                }
+
+                // Move account up function
+                function moveUp() {
+                    QGoogleAuthStorage.swapAccountSortOrder(accountsModel.get(index).accountId, accountsModel.get(index-1).accountId);
+                    accountsModel.move(index,index-1,1);
+                }
+
+                // Move account down function
+                function moveDown() {
+                    QGoogleAuthStorage.swapAccountSortOrder(accountsModel.get(index).accountId, accountsModel.get(index+1).accountId);
+                    accountsModel.move(index,index+1,1);
+                }
+
+                // List item content (name and passcode)
+                Column {
+                    width: parent.width
+
+                    Label {
+                        text: accountName
+                        color: accountsDelegate.highlighted ? Theme.highlightColor : Theme.primaryColor
+                        font.pixelSize: Theme.fontSizeSmall
+                        truncationMode: TruncationMode.Fade
+                        width: parent.width - Theme.paddingLarge*2
+                        x: Theme.paddingLarge
                     }
-                    height: contentHeight
-                    delegate: ListItem {
-                        id: accountsDelegate
-                        menu: contextMenu
+                    Label {
+                        text: accountPasscode
+                        color: accountsDelegate.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
+                        font.pixelSize: Theme.fontSizeMedium
+                        width: parent.width - Theme.paddingLarge*2
+                        x: Theme.paddingLarge
+                    }
+                }
 
-                        width: ListView.view.width
-                        height: Theme.itemSizeSmall
-
-                        ListView.onRemove: animateRemoval(accountsDelegate)
-
-                        // Remove account function
-                        function remove() {
-                            remorseAction("Deleting " + accountName, function() {
-                                QGoogleAuthStorage.removeAccount(accountId)
-
-                                page.refreshPasscodes();
-                            })
-                        }
-
-                        // Edit account function
-                        function edit() {
-                            var editDialog = pageStack.push(Qt.resolvedUrl("../dialogs/EditAccountDialog.qml"), {"editAccountName": accountName, "editAccountKey": accountKey});
-
-                            editDialog.accepted.connect(function() {
-                                QGoogleAuthStorage.updateAccount(accountId, editDialog.editAccountName, editDialog.editAccountKey)
-
-                                accountsModel.setProperty(index, "accountName", editDialog.editAccountName);
-                                accountsModel.setProperty(index, "accountKey", editDialog.editAccountKey);
-
-                                page.refreshPasscodes()
-                            })
-                        }
-
-                        // Move account up function
-                        function moveUp() {
-                            QGoogleAuthStorage.swapAccountSortOrder(accountsModel.get(index).accountId, accountsModel.get(index-1).accountId);
-                            accountsModel.move(index,index-1,1);
-                        }
-
-                        // Move account down function
-                        function moveDown() {
-                            QGoogleAuthStorage.swapAccountSortOrder(accountsModel.get(index).accountId, accountsModel.get(index+1).accountId);
-                            accountsModel.move(index,index+1,1);
-                        }
-
-                        // List item content (name and passcode)
-                        Column {
-                            x: Theme.paddingLarge
-                            Label {
-                                text: accountName
-                                color: accountsDelegate.highlighted ? Theme.highlightColor : Theme.primaryColor
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
-                            Label {
-                                text: accountPasscode
-                                color: accountsDelegate.highlighted ? Theme.secondaryHighlightColor : Theme.secondaryColor
-                                font.pixelSize: Theme.fontSizeMedium
+                // Menu if listitem is pressed
+                Component {
+                    id: contextMenu
+                    ContextMenu {
+                        MenuItem {
+                            text: "Copy to clipboard"
+                            onClicked: {
+                                Clipboard.text = accountPasscode
                             }
                         }
-
-                        // Menu if listitem is pressed
-                        Component {
-                            id: contextMenu
-                            ContextMenu {
-                                height: contentHeight
-                                MenuItem {
-                                    text: "Remove"
-                                    onClicked: remove()
-                                }
-                                MenuItem {
-                                    text: "Edit"
-                                    onClicked: edit()
-                                }
-                                MenuItem {
-                                    text: "Move up"
-                                    onClicked: {
-                                        moveUp()
-                                    }
-                                    visible: index > 0
-                                }
-                                MenuItem {
-                                    text: "Move down"
-                                    onClicked: {
-                                        moveDown()
-                                    }
-                                    visible: index < accountsModel.count-1
-                                }
-                                MenuItem {
-                                    text: "Copy to clipboard"
-                                    onClicked: {
-                                        Clipboard.text = accountPasscode
-                                    }
-                                }
+                        MenuItem {
+                            text: "Move up"
+                            onClicked: {
+                                moveUp()
                             }
+                            visible: index > 0
+                        }
+                        MenuItem {
+                            text: "Move down"
+                            onClicked: {
+                                moveDown()
+                            }
+                            visible: index < accountsModel.count-1
+                        }
+                        MenuItem {
+                            text: "Edit"
+                            onClicked: edit()
+                        }
+                        MenuItem {
+                            text: "Remove"
+                            onClicked: remove()
                         }
                     }
                 }
             }
+
+            VerticalScrollDecorator { flickable: accountsListView }
         }
+
     }
 
     // Timer to refresh passcodes
