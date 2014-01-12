@@ -2,8 +2,8 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Dialog {
-    property string newAccountName
-    property string newAccountKey
+    property string newAccountName: ""
+    property string newAccountKey: ""
 
     Column {
         spacing: 10
@@ -22,6 +22,7 @@ Dialog {
 
         TextField {
             id: nameField
+            text: newAccountName
             width: parent.width
             placeholderText: "Account name"
             label: "Account name"
@@ -42,6 +43,7 @@ Dialog {
 
         TextField {
             id: keyField
+            text: newAccountKey
             width: parent.width
             placeholderText: "Account key"
             label: "Account key"

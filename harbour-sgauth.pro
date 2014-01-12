@@ -9,12 +9,14 @@
 TARGET = harbour-sgauth
 
 CONFIG += sailfishapp
+QT += dbus
 
 SOURCES += \
     src/qgoogleauth.cpp \
     src/base32.cpp \
     src/hmac.cpp \
-    src/harbour-sgauth.cpp
+    src/harbour-sgauth.cpp \
+    src/barcodescanner.cpp
 
 OTHER_FILES += \
     qml/cover/CoverPage.qml \
@@ -27,13 +29,17 @@ OTHER_FILES += \
     qml/harbour-sgauth.qml \
     harbour-sgauth.png \
     qml/components/harbour.sgauth.QGoogleAuthStorage.js \
-    qml/pages/MainPage.qml
+    qml/pages/MainPage.qml \
+    qml/pages/ScanPage.qml
 
 HEADERS += \
     src/qgoogleauth.h \
     src/hmac.h \
-    src/base32.h
+    src/base32.h \
+    src/barcodescanner.h
 
 RESOURCES += \
     harbour-sgauth.qrc
 
+
+include(src/qzxing/QZXing.pri)

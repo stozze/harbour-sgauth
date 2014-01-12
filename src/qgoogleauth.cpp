@@ -1,12 +1,12 @@
-#include "qgoogleauth.h"
 #include <QtEndian>
 #include <QDateTime>
-#include "base32.h"
-#include "hmac.h"
-#include <QQmlEngine>
-#include <QJSEngine>
 #include <QTimer>
 #include <QtMath>
+#include <QUrl>
+#include <QUrlQuery>
+#include "base32.h"
+#include "hmac.h"
+#include "qgoogleauth.h"
 
 QGoogleAuth::QGoogleAuth(QObject *parent) : QObject(parent) {
 }
@@ -43,3 +43,15 @@ QString QGoogleAuth::generatePin(const QByteArray key)
     return QString("%1").arg(password, 6, 10, QChar('0'));
 }
 
+QVariantMap QGoogleAuth::parseOTPAuth(const QString optauth) {
+    QVariantMap result;
+    QUrl otpurl(optauth);
+    QUrlQuery otpquery(otpurl.query());
+
+    result["type"] = otpurl.host();
+    result["label"] = otpurl.path().mid(1);
+    result["secret"] = otpquery.hasQueryItem("secret") ? otpquery.queryItemValue("secret") : "";
+    result["issuer"] = otpquery.hasQueryItem("issuer") ? otpquery.queryItemValue("issuer") : "";
+
+    return result;
+}

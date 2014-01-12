@@ -4,7 +4,7 @@ import harbour.sgauth.QGoogleAuth 1.0
 import "../components/harbour.sgauth.QGoogleAuthStorage.js" as QGoogleAuthStorage
 
 Page {
-    id: page
+    id: mainpage
 
     function refreshPasscodes() {
         var accounts = QGoogleAuthStorage.getAccounts();
@@ -35,6 +35,30 @@ Page {
             accountsWrapper.visible = false
     }
 
+    function addAccountFromQRcode(code) {
+        var parsedCode = {
+            "label": "",
+            "secret": ""
+        }
+        // Parse otpauth
+        if (code.indexOf("otpauth://totp") !== -1) {
+            var tmpCode = QGoogleAuth.parseOTPAuth(code);
+            parsedCode["label"] = tmpCode["label"];
+            parsedCode["secret"] = tmpCode["secret"];
+        }
+        else {
+            parsedCode["secret"] = code;
+        }
+
+        var addNewDialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddNewAccountDialog.qml"), {"newAccountName": parsedCode["label"], "newAccountKey": parsedCode["secret"]});
+
+        addNewDialog.accepted.connect(function() {
+            QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey)
+
+            mainpage.refreshPasscodes()
+        })
+    }
+
     // List model for accounts
     ListModel {
         id: accountsModel
@@ -61,14 +85,20 @@ Page {
                     addNewDialog.accepted.connect(function() {
                         QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey)
 
-                        page.refreshPasscodes()
+                        mainpage.refreshPasscodes()
                     })
+                }
+            }
+            MenuItem {
+                text: "Scan QR code (experimental)"
+                onClicked: {
+                    pageStack.push(Qt.resolvedUrl("ScanPage.qml"));
                 }
             }
 
             MenuItem {
                 text: "Refresh now"
-                onClicked: page.refreshPasscodes()
+                onClicked: mainpage.refreshPasscodes()
                 visible: accountsWrapper.visible
             }
         }
@@ -153,7 +183,7 @@ Page {
                     remorseAction("Deleting " + accountName, function() {
                         QGoogleAuthStorage.removeAccount(accountId)
 
-                        page.refreshPasscodes();
+                        mainpage.refreshPasscodes();
                     })
                 }
 
@@ -167,7 +197,7 @@ Page {
                         accountsModel.setProperty(index, "accountName", editDialog.editAccountName);
                         accountsModel.setProperty(index, "accountKey", editDialog.editAccountKey);
 
-                        page.refreshPasscodes()
+                        mainpage.refreshPasscodes()
                     })
                 }
 
@@ -255,7 +285,7 @@ Page {
 
             // Refresh on 30 and 29 just to make sure we get the latest code
             if (timeLeft == 30 || timeLeft == 29) {
-                page.refreshPasscodes()
+                mainpage.refreshPasscodes()
             }
 
             timeLeftProgressBar.value = timeLeft
@@ -264,7 +294,7 @@ Page {
 
     // Initial passcodes
     Component.onCompleted: {
-        page.refreshPasscodes()
+        mainpage.refreshPasscodes()
         timeLeftProgressBar.value = QGoogleAuth.timeLeft()
     }
 }

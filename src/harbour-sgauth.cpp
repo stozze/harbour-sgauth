@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <QtQuick>
 #include <sailfishapp.h>
 #include "qgoogleauth.h"
+#include "barcodescanner.h"
 
 
 // Create singleton QGoogleAuth
@@ -42,6 +43,16 @@ static QObject *google_auth_singleton_provider(QQmlEngine *engine, QJSEngine *sc
     return sng;
 }
 
+// Create singleton BarcodeScanner
+static QObject *barcode_scanner_singleton_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(scriptEngine)
+
+    BarcodeScanner *sng = new BarcodeScanner();
+    engine->addImageProvider("barcodescanner", sng->getImageProvider());
+    return sng;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -49,6 +60,7 @@ int main(int argc, char *argv[])
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
     qmlRegisterSingletonType<QGoogleAuth>("harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
+    qmlRegisterSingletonType<BarcodeScanner>("harbour.sgauth.BarcodeScanner", 1, 0, "BarcodeScanner", barcode_scanner_singleton_provider);
 
     view->setSource(SailfishApp::pathTo("qml/harbour-sgauth.qml"));
     view->show();
