@@ -6,18 +6,14 @@ Dialog {
     property string newAccountKey: ""
 
     Column {
-        spacing: 10
         anchors.fill: parent
+
+        x: Theme.paddingLarge
+        width: parent.width - Theme.paddingLarge*2
 
         DialogHeader {
             acceptText: "Add new account"
             width: parent.width
-        }
-
-        Label {
-            x: Theme.paddingLarge
-            color: Theme.secondaryColor
-            font.pixelSize: Theme.fontSizeMedium
         }
 
         TextField {
@@ -32,13 +28,25 @@ Dialog {
             EnterKey.onClicked: keyField.focus = true
         }
 
+        Rectangle {
+            color: "transparent"
+            width: parent.width
+            height: Theme.paddingSmall
+        }
+
         Text {
             x: Theme.paddingLarge
+            width: parent.width - Theme.paddingLarge*2
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeSmall
             text: "Enter provided key, must be atleast 16 chars long and may contain spaces"
             wrapMode: Text.WordWrap
+        }
+
+        Rectangle {
+            color: "transparent"
             width: parent.width
+            height: Theme.paddingSmall
         }
 
         TextField {
@@ -49,7 +57,10 @@ Dialog {
             label: "Account key"
             inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase
             EnterKey.enabled: text.length > 0 && canAccept
-            EnterKey.onClicked: accept()
+            EnterKey.onClicked: {
+                if (keyField.text.length >= 16)
+                    keyField.focus = false
+            }
         }
     }
 

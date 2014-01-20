@@ -55,3 +55,11 @@ QVariantMap QGoogleAuth::parseOTPAuth(const QString optauth) {
 
     return result;
 }
+
+QString QGoogleAuth::createOTPAuth(const QString type, const QString label, const QString secret) {
+    QString formattedLabel = QString(label).replace(QString(":"), QString(" ")).replace(QString("?"), QString(""));
+    QString formattedSecret = secret.toUpper().replace(QString(" "), QString(""));
+
+    QUrl otpurl("otpauth://" + type + "/SGAuth:" + formattedLabel + "?secret=" + formattedSecret + "&issuer=SGAuth");
+    return otpurl.toEncoded();
+}

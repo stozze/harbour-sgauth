@@ -16,7 +16,9 @@ SOURCES += \
     src/base32.cpp \
     src/hmac.cpp \
     src/harbour-sgauth.cpp \
-    src/barcodescanner.cpp
+    src/barcodescanner.cpp \
+    src/sgauthimageprovider.cpp \
+    src/barcodewriter.cpp
 
 OTHER_FILES += \
     qml/cover/CoverPage.qml \
@@ -36,10 +38,13 @@ HEADERS += \
     src/qgoogleauth.h \
     src/hmac.h \
     src/base32.h \
-    src/barcodescanner.h
+    src/barcodescanner.h \
+    src/sgauthimageprovider.h \
+    src/barcodewriter.h
 
 RESOURCES += \
     harbour-sgauth.qrc
 
 
 include(src/qzxing/QZXing.pri)
+include(src/qqrencode/qqrencode.pri)

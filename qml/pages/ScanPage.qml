@@ -37,6 +37,18 @@ Page {
                 wrapMode: Text.WordWrap
                 color: Theme.highlightColor
             }
+
+            /*
+            // Used for debugging only
+            Image {
+                id: scanImage
+                width: parent.width
+                height: parent.width
+                source: ""
+                cache: false
+                fillMode: Image.PreserveAspectFit
+            }
+            */
         }
     }
 
@@ -50,6 +62,13 @@ Page {
             pageStack.navigateBack(PageStackAction.Immediate);
             pageStack.currentPage.addAccountFromQRcode(code);
         }
+        /*
+        // Used for debugging only
+        onBarcodeScanAttempt: {
+            scanImage.source = ""
+            scanImage.source = "image://sgauth/screenshot"
+        }
+        */
         onBarcodeNotFound: {
             appwindow.activate();
             statusText.text = "No code was found!"
@@ -61,6 +80,8 @@ Page {
         statusText.text = "Scan in progress!\n\nUse the viewfinder of the camera application to focus on a QR code.\n\nThis feature is still experimental and may not work as expected."
         BarcodeScanner.startScanning();
         scanAgainMenu.enabled = false
+
+
     }
 
     Component.onCompleted: {

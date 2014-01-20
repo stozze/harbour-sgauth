@@ -31,7 +31,8 @@ either expressed or implied, of the FreeBSD Project.
 #include <sailfishapp.h>
 #include "qgoogleauth.h"
 #include "barcodescanner.h"
-
+#include "barcodewriter.h"
+#include "sgauthimageprovider.h"
 
 // Create singleton QGoogleAuth
 static QObject *google_auth_singleton_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
@@ -46,10 +47,20 @@ static QObject *google_auth_singleton_provider(QQmlEngine *engine, QJSEngine *sc
 // Create singleton BarcodeScanner
 static QObject *barcode_scanner_singleton_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
+    Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
 
     BarcodeScanner *sng = new BarcodeScanner();
-    engine->addImageProvider("barcodescanner", sng->getImageProvider());
+    return sng;
+}
+
+// Create singleton BarcodeWriter
+static QObject *barcode_writer_singleton_provider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    BarcodeWriter *sng = new BarcodeWriter();
     return sng;
 }
 
@@ -61,10 +72,14 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<QGoogleAuth>("harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
     qmlRegisterSingletonType<BarcodeScanner>("harbour.sgauth.BarcodeScanner", 1, 0, "BarcodeScanner", barcode_scanner_singleton_provider);
+    qmlRegisterSingletonType<BarcodeWriter>("harbour.sgauth.BarcodeWriter", 1, 0, "BarcodeWriter", barcode_writer_singleton_provider);
+
+    view->engine()->addImageProvider("sgauth", new SGAuthImageProvider());
 
     view->setSource(SailfishApp::pathTo("qml/harbour-sgauth.qml"));
     view->show();
 
     return app->exec();
 }
+
 

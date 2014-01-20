@@ -6,18 +6,7 @@
 #include <QByteArray>
 #include <QTimer>
 #include <QImage>
-#include <QQuickImageProvider>
-
-class BarcodeScannerImageProvider : public QQuickImageProvider {
-public:
-    BarcodeScannerImageProvider() : QQuickImageProvider(QQuickImageProvider::Image) { }
-    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
-
-    void setCachedImage(QImage img);
-
-private:
-    QImage cachedImage;
-};
+#include "qqrencode.h"
 
 class BarcodeScanner : public QObject {
     Q_OBJECT
@@ -29,13 +18,12 @@ public:
     Q_INVOKABLE bool isScanning();
     Q_INVOKABLE void stopScanning();
 
-    BarcodeScannerImageProvider *getImageProvider();
-
 public slots:
     void captureScreen();
     void captureTimeout();
 
 signals:
+    void barcodeScanAttempt();
     void barcodeFound(QString code);
     void barcodeNotFound();
 
@@ -43,7 +31,6 @@ private:
     QString cacheFolderLocation;
     QString cacheScreenshotLocation;
     QTimer *captureTimer, *timeoutTimer;
-    BarcodeScannerImageProvider *imageProvider;
     class QZXing *decoder;
 };
 
