@@ -2,6 +2,7 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.sgauth.QGoogleAuth 1.0
 import "../components/harbour.sgauth.QGoogleAuthStorage.js" as QGoogleAuthStorage
+import harbour.sgauth.BarcodeScanner 1.0
 
 Page {
     id: mainpage
@@ -95,7 +96,6 @@ Page {
                     pageStack.push(Qt.resolvedUrl("ScanPage.qml"));
                 }
             }
-
             MenuItem {
                 text: "Refresh now"
                 onClicked: mainpage.refreshPasscodes()

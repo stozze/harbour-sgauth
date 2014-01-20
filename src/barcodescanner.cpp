@@ -7,21 +7,7 @@
 #include <QPainter>
 #include "qzxing.h"
 #include "barcodescanner.h"
-
-// Barcode image provider class
-QImage BarcodeScannerImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize) {
-    Q_UNUSED(id)
-    Q_UNUSED(size)
-    Q_UNUSED(requestedSize);
-
-    return cachedImage;
-}
-
-void BarcodeScannerImageProvider::setCachedImage(QImage img) {
-    cachedImage = img;
-}
-
-// Barcode scanner class
+#include "sgauthimageprovider.h"
 
 BarcodeScanner::BarcodeScanner(QObject *parent) : QObject(parent) {
     // Create cache folder if it doesn't exist
@@ -44,9 +30,6 @@ BarcodeScanner::BarcodeScanner(QObject *parent) : QObject(parent) {
     timeoutTimer->setSingleShot(true);
     connect(timeoutTimer, SIGNAL(timeout()), this, SLOT(captureTimeout()));
 
-    // Image provider (currently only used during debugging)
-    imageProvider = new BarcodeScannerImageProvider();
-
     // ZXing
     decoder = new QZXing();
 }
@@ -60,10 +43,6 @@ BarcodeScanner::~BarcodeScanner() {
 
     delete decoder;
     decoder = 0;
-}
-
-BarcodeScannerImageProvider *BarcodeScanner::getImageProvider() {
-    return imageProvider;
 }
 
 void BarcodeScanner::startScanning() {
@@ -111,9 +90,11 @@ void BarcodeScanner::captureScreen() {
         //qDebug() << QString("Point: ") << QString::number(p.x()) << " " << QString::number(p.y());
     }
 
+    SGAuthImageProvider::setScreenshotImage(img);
+    emit barcodeScanAttempt();
+
     if (code.length()) {
         stopScanning();
-        getImageProvider()->setCachedImage(img);
         emit barcodeFound(code);
     }
 }
