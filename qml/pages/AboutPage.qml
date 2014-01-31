@@ -11,11 +11,11 @@ Page {
 
         PageHeader {
             id: header
-            title: "About SGAuth v0.3-3"
+            title: "About SGAuth v0.4-1"
         }
 
         Text {
-            text: "This is just a simple application that generates Google Authenticator TOTP passcodes. "+
+            text: "This is just a simple application that generates TOTP and HOTP passcodes (like Google Authenticator). "+
                   "The QR code scanning feature is still experimental and may not work as expected."+
                   "\n\n"+
                   "Source code is available on GitHub:\n"+

@@ -22,10 +22,13 @@ uint QGoogleAuth::timeLeft() {
     return (uint)(timenext - timenow);
 }
 
-QString QGoogleAuth::generatePin(const QByteArray key)
+QString QGoogleAuth::generatePin(const QByteArray key, QString type, quint64 counter)
 {
     quint64 time = QDateTime::currentDateTime().toTime_t();
     quint64 current = qToBigEndian(time / 30);
+
+    if (type == "HOTP")
+        current = qToBigEndian(counter);
 
     int secretLen = (key.length() + 7) / 8 * 5;
     quint8 secret[100];
@@ -43,23 +46,29 @@ QString QGoogleAuth::generatePin(const QByteArray key)
     return QString("%1").arg(password, 6, 10, QChar('0'));
 }
 
-QVariantMap QGoogleAuth::parseOTPAuth(const QString optauth) {
+QVariantMap QGoogleAuth::parseOTPAuth(const QString otpauth) {
     QVariantMap result;
-    QUrl otpurl(optauth);
+    QUrl otpurl(otpauth);
     QUrlQuery otpquery(otpurl.query());
 
     result["type"] = otpurl.host();
     result["label"] = otpurl.path().mid(1);
     result["secret"] = otpquery.hasQueryItem("secret") ? otpquery.queryItemValue("secret") : "";
     result["issuer"] = otpquery.hasQueryItem("issuer") ? otpquery.queryItemValue("issuer") : "";
+    result["counter"] = otpquery.hasQueryItem("counter") ? otpquery.queryItemValue("counter") : "1";
 
     return result;
 }
 
-QString QGoogleAuth::createOTPAuth(const QString type, const QString label, const QString secret) {
+QString QGoogleAuth::createOTPAuth(const QString type, const QString label, const QString secret, quint64 counter) {
     QString formattedLabel = QString(label).replace(QString(":"), QString(" ")).replace(QString("?"), QString(""));
     QString formattedSecret = secret.toUpper().replace(QString(" "), QString(""));
+    QString formattedType = type.toLower();
+    QString formattedCounter = "";
+    if (formattedType == "hotp") {
+        formattedCounter = "&counter=" + QString::number(counter);
+    }
 
-    QUrl otpurl("otpauth://" + type + "/SGAuth:" + formattedLabel + "?secret=" + formattedSecret + "&issuer=SGAuth");
+    QUrl otpurl("otpauth://" + formattedType + "/SGAuth:" + formattedLabel + "?secret=" + formattedSecret + "&issuer=SGAuth" + formattedCounter);
     return otpurl.toEncoded();
 }

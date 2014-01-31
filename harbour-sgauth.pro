@@ -32,7 +32,8 @@ OTHER_FILES += \
     harbour-sgauth.png \
     qml/components/harbour.sgauth.QGoogleAuthStorage.js \
     qml/pages/MainPage.qml \
-    qml/pages/ScanPage.qml
+    qml/pages/ScanPage.qml \
+    qml/dialogs/CheckKeyDialog.qml
 
 HEADERS += \
     src/qgoogleauth.h \

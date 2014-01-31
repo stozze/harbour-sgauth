@@ -5,12 +5,18 @@ import "../components/harbour.sgauth.QGoogleAuthStorage.js" as QGoogleAuthStorag
 
 CoverBackground {
     id: coverRoot
+    property bool hasTOTPAccounts: false
 
     function refreshCoverPasscodes() {
+        coverRoot.hasTOTPAccounts = false
         // Now refresh passcodes for all cover accounts
         for (var i = 0; i < accountsCoverModel.count; i++) {
             var currentlistAccount = accountsCoverModel.get(i)
-            accountsCoverModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey))
+            accountsCoverModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey,currentlistAccount.accountType,currentlistAccount.accountCounter))
+
+            if (currentlistAccount.accountType == "TOTP") {
+                coverRoot.hasTOTPAccounts = true
+            }
         }
     }
 
@@ -28,6 +34,8 @@ CoverBackground {
                     "accountId": accounts[i]["accountId"],
                     "accountName": accounts[i]["accountName"],
                     "accountKey": accounts[i]["accountKey"],
+                    "accountType": accounts[i]["accountType"],
+                    "accountCounter": accounts[i]["accountCounter"],
                     "accountPasscode": ""
                 })
             }
@@ -99,6 +107,7 @@ CoverBackground {
             value: QGoogleAuth.timeLeft()
             width: parent.width
             anchors.bottom: parent.bottom
+            visible: coverRoot.hasTOTPAccounts ? true : false
         }
     }
 

@@ -1,14 +1,14 @@
 Name: harbour-sgauth
 Summary: SGAuth
-Version: 0.3
-Release: 3
+Version: 0.4
+Release: 1
 Group: Qt/Qt
 URL: http://example.org/
 License: LICENSE
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |-
-  Simple application that generates Google Authenticator TOTP passcodes.
+  Simple application that generates TOTP and HOTP passcodes (like Google Authenticator).
 Configure: none
 Builder: qtc5
 PkgConfigBR:
