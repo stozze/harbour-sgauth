@@ -70,6 +70,10 @@ int main(int argc, char *argv[])
     QScopedPointer<QGuiApplication> app(SailfishApp::application(argc, argv));
     QScopedPointer<QQuickView> view(SailfishApp::createView());
 
+    app->setOrganizationName("");
+    app->setOrganizationDomain("");
+    app->setApplicationName("harbour-sgauth");
+
     qmlRegisterSingletonType<QGoogleAuth>("harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
     qmlRegisterSingletonType<BarcodeScanner>("harbour.sgauth.BarcodeScanner", 1, 0, "BarcodeScanner", barcode_scanner_singleton_provider);
     qmlRegisterSingletonType<BarcodeWriter>("harbour.sgauth.BarcodeWriter", 1, 0, "BarcodeWriter", barcode_writer_singleton_provider);
