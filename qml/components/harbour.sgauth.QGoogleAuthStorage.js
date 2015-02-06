@@ -101,7 +101,7 @@ function getAccounts() {
     return accounts;
 }
 
-function insertAccount(name, key, type, counter) {
+function insertAccount(name, key, type, counter, digits) {
     var db = getDatabase();
     var sortorder = 1;
 
@@ -112,7 +112,7 @@ function insertAccount(name, key, type, counter) {
     });
 
     db.transaction(function(tx) {
-        var rs = tx.executeSql("INSERT INTO Account (Name,Key,Type,Counter,SortOrder) VALUES(?,?,?,?,?)", [name, key, type, counter, sortorder]);
+        var rs = tx.executeSql("INSERT INTO Account (Name,Key,Type,Counter,Digits,SortOrder) VALUES(?,?,?,?,?,?)", [name, key, type, counter, digits, sortorder]);
 
         return rs.insertId;
     });
@@ -120,11 +120,11 @@ function insertAccount(name, key, type, counter) {
     return -1;
 }
 
-function updateAccount(id, name, key, type, counter) {
+function updateAccount(id, name, key, type, counter, digits) {
     var db = getDatabase();
 
     db.transaction(function(tx) {
-        var rs = tx.executeSql("UPDATE Account SET Name=?,Key=?,Type=?,Counter=? WHERE ID = ?", [name, key, type, counter, id]);
+        var rs = tx.executeSql("UPDATE Account SET Name=?,Key=?,Type=?,Counter=?,Digits=? WHERE ID = ?", [name, key, type, counter, digits, id]);
 
         return rs.rowsAffected;
     });

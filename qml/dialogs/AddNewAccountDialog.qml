@@ -6,6 +6,7 @@ Dialog {
     property string newAccountKey: ""
     property string newAccountType: "TOTP"
     property int newAccountCounter: 1
+    property int newAccountDigits: 6
 
     Column {
         anchors.fill: parent
@@ -63,7 +64,7 @@ Dialog {
             EnterKey.enabled: text.length >= 16
             EnterKey.onClicked: {
                 if (keyField.text.length >= 16)
-                    keyField.focus = false
+                    digitsField.focus = true
             }
         }
 
@@ -71,6 +72,18 @@ Dialog {
             color: "transparent"
             width: parent.width
             height: Theme.paddingSmall
+        }
+
+
+        TextField {
+            id: digitsField
+            width: parent.width
+            text: newAccountDigits
+            placeholderText: "Code digits"
+            label: "Code digits"
+            validator: IntValidator { bottom: 1; top: 8; }
+            inputMethodHints: Qt.ImhDigitsOnly
+            EnterKey.onClicked: digitsField.focus = false
         }
 
         ComboBox {
@@ -110,7 +123,7 @@ Dialog {
 
     }
 
-    canAccept: keyField.text.length >= 16 && nameField.text.length >= 1 && (typeComboBox.currentIndex == 0 || parseInt(counterField.text,10) >= 1) ? true : false
+    canAccept: keyField.text.length >= 16 && nameField.text.length >= 1 && (typeComboBox.currentIndex == 0 || parseInt(counterField.text,10) >= 1) && digitsField.text.length >= 1 ? true : false
 
     onDone: {
         if (result == DialogResult.Accepted) {
@@ -119,6 +132,7 @@ Dialog {
             newAccountCounter = parseInt(counterField.text,10) || 1
             if (newAccountCounter < 1)
                 newAccountCounter = 1;
+            newAccountDigits = parseInt(digitsField.text,10);
 
             newAccountType = typeComboBox.currentIndex == 0 ? "TOTP" : "HOTP"
         }

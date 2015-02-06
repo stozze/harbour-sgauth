@@ -8,14 +8,16 @@ Dialog {
     property string editAccountKey
     property string editAccountType
     property int editAccountCounter
+    property int editAccountDigits
 
     function refreshQRImage() {
         var counterValue = parseInt(counterField.text,10) || 1;
         if (counterValue < 1)
             counterValue = 1;
         var accountType = typeComboBox.currentIndex == 0 ? "TOTP" : "HOTP";
+        var digitsValue = parseInt(digitsField.text,10) || 6;
 
-        var otpauth = QGoogleAuth.createOTPAuth(accountType, nameField.text, keyField.text, counterValue)
+        var otpauth = QGoogleAuth.createOTPAuth(accountType, nameField.text, keyField.text, counterValue, digitsValue)
         if (otpauth.length && nameField.text.length > 0 && keyField.text.length >= 16 && (accountType == "TOTP" || (accountType == "HOTP" && counterValue >= 1))) {
             BarcodeWriter.encode(otpauth);
             scannableImage.source = ""
@@ -91,7 +93,7 @@ Dialog {
                 EnterKey.enabled: text.length > 0 && canAccept
                 EnterKey.onClicked: {
                     if (keyField.text.length >= 16)
-                        keyField.focus = false
+                        digitsField.focus = true
                 }
 
                 onTextChanged: {
@@ -103,6 +105,20 @@ Dialog {
                 color: "transparent"
                 width: parent.width
                 height: Theme.paddingSmall
+            }
+
+            TextField {
+                id: digitsField
+                width: parent.width
+                text: editAccountDigits
+                placeholderText: "Code digits"
+                label: "Code digits"
+                validator: IntValidator { bottom: 1; top: 8; }
+                inputMethodHints: Qt.ImhDigitsOnly
+                EnterKey.onClicked: digitsField.focus = false
+                onTextChanged: {
+                    refreshQRImage();
+                }
             }
 
             ComboBox {
@@ -194,7 +210,7 @@ Dialog {
         }
     }
 
-    canAccept: keyField.text.length >= 16 && nameField.text.length >= 1 ? true : false
+    canAccept: keyField.text.length >= 16 && nameField.text.length >= 1 && digitsField.text.length >= 1 ? true : false
 
     onDone: {
         if (result == DialogResult.Accepted) {
@@ -203,7 +219,7 @@ Dialog {
             editAccountCounter = parseInt(counterField.text,10) || 1
             if (editAccountCounter < 1)
                 editAccountCounter = 1;
-
+            editAccountDigits = parseInt(digitsField.text,10);
             editAccountType = typeComboBox.currentIndex == 0 ? "TOTP" : "HOTP"
         }
     }

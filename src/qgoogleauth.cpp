@@ -8,6 +8,11 @@
 #include "hmac.h"
 #include "qgoogleauth.h"
 
+static const int DIGITS_POWER[] = {
+    1,10,100,1000,10000,100000,1000000,10000000,100000000
+};
+static const unsigned DIGITS_DEFAULT = 6;
+
 QGoogleAuth::QGoogleAuth(QObject *parent) : QObject(parent) {
 }
 
@@ -22,7 +27,7 @@ uint QGoogleAuth::timeLeft() {
     return (uint)(timenext - timenow);
 }
 
-QString QGoogleAuth::generatePin(const QByteArray key, QString type, quint64 counter)
+QString QGoogleAuth::generatePin(const QByteArray key, QString type, quint64 counter, unsigned digits)
 {
     quint64 time = QDateTime::currentDateTime().toTime_t();
     quint64 current = qToBigEndian(time / 30);
@@ -42,8 +47,8 @@ QString QGoogleAuth::generatePin(const QByteArray key, QString type, quint64 cou
             | ((hmac[offset + 2] & 0xff) << 8)
             | (hmac[offset + 3] & 0xff);
 
-    int password = binary % 1000000;
-    return QString("%1").arg(password, 6, 10, QChar('0'));
+    int password = binary % DIGITS_POWER[digits];
+    return QString("%1").arg(password, digits, 10, QChar('0'));
 }
 
 QVariantMap QGoogleAuth::parseOTPAuth(const QString otpauth) {
@@ -56,19 +61,21 @@ QVariantMap QGoogleAuth::parseOTPAuth(const QString otpauth) {
     result["secret"] = otpquery.hasQueryItem("secret") ? otpquery.queryItemValue("secret") : "";
     result["issuer"] = otpquery.hasQueryItem("issuer") ? otpquery.queryItemValue("issuer") : "";
     result["counter"] = otpquery.hasQueryItem("counter") ? otpquery.queryItemValue("counter") : "1";
+    result["digits"] = otpquery.hasQueryItem("digits") ? otpquery.queryItemValue("digits") : "6";
 
     return result;
 }
 
-QString QGoogleAuth::createOTPAuth(const QString type, const QString label, const QString secret, quint64 counter) {
+QString QGoogleAuth::createOTPAuth(const QString type, const QString label, const QString secret, quint64 counter, unsigned digits) {
     QString formattedLabel = QString(label).replace(QString(":"), QString(" ")).replace(QString("?"), QString(""));
     QString formattedSecret = secret.toUpper().replace(QString(" "), QString(""));
     QString formattedType = type.toLower();
     QString formattedCounter = "";
+    QString formattedDigits = (digits == DIGITS_DEFAULT) ? "" : ("&digits=" + QString::number(digits));
     if (formattedType == "hotp") {
         formattedCounter = "&counter=" + QString::number(counter);
     }
 
-    QUrl otpurl("otpauth://" + formattedType + "/SGAuth:" + formattedLabel + "?secret=" + formattedSecret + "&issuer=SGAuth" + formattedCounter);
+    QUrl otpurl("otpauth://" + formattedType + "/SGAuth:" + formattedLabel + "?secret=" + formattedSecret + "&issuer=SGAuth" + formattedCounter + formattedDigits);
     return otpurl.toEncoded();
 }
