@@ -22,6 +22,7 @@ Page {
                     "accountKey": accounts[i]["accountKey"],
                     "accountType": accounts[i]["accountType"],
                     "accountCounter": accounts[i]["accountCounter"],
+                    "accountDigits": accounts[i]["accountDigits"],
                     "accountPasscode": ""
                 })
             }
@@ -31,7 +32,7 @@ Page {
         mainpage.hasTOTPAccounts = false
         for (var i = 0; i < accountsModel.count; i++) {
             var currentlistAccount = accountsModel.get(i)
-            accountsModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey,currentlistAccount.accountType,currentlistAccount.accountCounter))
+            accountsModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey,currentlistAccount.accountType,currentlistAccount.accountCounter,currentlistAccount.accountDigits))
             if (currentlistAccount.accountType == "TOTP")
                 mainpage.hasTOTPAccounts = true;
         }
@@ -56,6 +57,7 @@ Page {
             parsedCode["secret"] = tmpCode["secret"];
             parsedCode["type"] = tmpCode["type"].toUpperCase();
             parsedCode["counter"] = tmpCode["counter"];
+            parsedCode["digits"] = tmpCode["digits"];
         }
         else {
             parsedCode["secret"] = code;
@@ -65,11 +67,12 @@ Page {
                                               "newAccountName": parsedCode["label"],
                                               "newAccountKey": parsedCode["secret"],
                                               "newAccountType": parsedCode["type"],
-                                              "newAccountCounter": parsedCode["counter"]
+                                              "newAccountCounter": parsedCode["counter"],
+                                              "newAccountDigits": parsedCode["digits"],
                                           });
 
         addNewDialog.accepted.connect(function() {
-            QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey, addNewDialog.newAccountType, addNewDialog.newAccountCounter)
+            QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey, addNewDialog.newAccountType, addNewDialog.newAccountCounter, addNewDialog.newAccountDigits)
 
             mainpage.refreshPasscodes()
         })
@@ -99,7 +102,7 @@ Page {
                     var addNewDialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddNewAccountDialog.qml"));
 
                     addNewDialog.accepted.connect(function() {
-                        QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey, addNewDialog.newAccountType, addNewDialog.newAccountCounter)
+                        QGoogleAuthStorage.insertAccount(addNewDialog.newAccountName, addNewDialog.newAccountKey, addNewDialog.newAccountType, addNewDialog.newAccountCounter, addNewDialog.newAccountDigits)
 
                         mainpage.refreshPasscodes()
                     })
@@ -206,15 +209,16 @@ Page {
 
                 // Edit account function
                 function edit() {
-                    var editDialog = pageStack.push(Qt.resolvedUrl("../dialogs/EditAccountDialog.qml"), {"editAccountName": accountName, "editAccountKey": accountKey, "editAccountType": accountType, "editAccountCounter": accountCounter });
+                    var editDialog = pageStack.push(Qt.resolvedUrl("../dialogs/EditAccountDialog.qml"), {"editAccountName": accountName, "editAccountKey": accountKey, "editAccountType": accountType, "editAccountCounter": accountCounter, "editAccountDigits": accountDigits });
 
                     editDialog.accepted.connect(function() {
-                        QGoogleAuthStorage.updateAccount(accountId, editDialog.editAccountName, editDialog.editAccountKey, editDialog.editAccountType, editDialog.editAccountCounter)
+                        QGoogleAuthStorage.updateAccount(accountId, editDialog.editAccountName, editDialog.editAccountKey, editDialog.editAccountType, editDialog.editAccountCounter, editDialog.editAccountDigits)
 
                         accountsModel.setProperty(index, "accountName", editDialog.editAccountName);
                         accountsModel.setProperty(index, "accountKey", editDialog.editAccountKey);
                         accountsModel.setProperty(index, "accountType", editDialog.editAccountType);
                         accountsModel.setProperty(index, "accountCounter", editDialog.editAccountCounter);
+                        accountsModel.setProperty(index, "accountDigits", editDialog.editAccountDigits);
 
                         mainpage.refreshPasscodes()
                     })
@@ -223,7 +227,7 @@ Page {
                 // Key check function
                 function keycheck() {
                     var checkDialog = pageStack.push(Qt.resolvedUrl("../dialogs/CheckKeyDialog.qml"), {
-                        "keyCheckPasscode": QGoogleAuth.generatePin(accountKey,"HOTP",0),
+                        "keyCheckPasscode": QGoogleAuth.generatePin(accountKey,"HOTP",0,accountDigits),
                         "keyCheckCounter": parseInt(accountCounter,10),
                         "keyCheckName": accountName
                     });
@@ -256,12 +260,12 @@ Page {
                         icon.source: accountType == "TOTP" ? "image://theme/icon-m-time-date" : "image://theme/icon-m-refresh"
                         onClicked: {
                             if (accountType == "TOTP") {
-                                accountsModel.setProperty(index, "accountPasscode", QGoogleAuth.generatePin(accountKey,accountType,accountCounter))
+                                accountsModel.setProperty(index, "accountPasscode", QGoogleAuth.generatePin(accountKey,accountType,accountCounter,accountDigits))
                             }
                             else if (accountType == "HOTP") {
                                 var nextCounterValue = parseInt(accountCounter,10) + 1;
                                 remorseAction("Next passcode for " + accountName, function() {
-                                    accountsModel.setProperty(index, "accountPasscode", QGoogleAuth.generatePin(accountKey,accountType,nextCounterValue))
+                                    accountsModel.setProperty(index, "accountPasscode", QGoogleAuth.generatePin(accountKey,accountType,nextCounterValue,accountDigits))
                                     accountsModel.setProperty(index, "accountCounter", nextCounterValue)
                                     QGoogleAuthStorage.incrementCounter(accountId)
                                 }, 2000)

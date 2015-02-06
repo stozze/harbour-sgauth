@@ -12,7 +12,7 @@ CoverBackground {
         // Now refresh passcodes for all cover accounts
         for (var i = 0; i < accountsCoverModel.count; i++) {
             var currentlistAccount = accountsCoverModel.get(i)
-            accountsCoverModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey,currentlistAccount.accountType,currentlistAccount.accountCounter))
+            accountsCoverModel.setProperty(i, "accountPasscode", QGoogleAuth.generatePin(currentlistAccount.accountKey,currentlistAccount.accountType,currentlistAccount.accountCounter,currentlistAccount.accountDigits))
 
             if (currentlistAccount.accountType == "TOTP") {
                 coverRoot.hasTOTPAccounts = true
@@ -36,6 +36,7 @@ CoverBackground {
                     "accountKey": accounts[i]["accountKey"],
                     "accountType": accounts[i]["accountType"],
                     "accountCounter": accounts[i]["accountCounter"],
+                    "accountDigits": accounts[i]["accountDigits"],
                     "accountPasscode": ""
                 })
             }
