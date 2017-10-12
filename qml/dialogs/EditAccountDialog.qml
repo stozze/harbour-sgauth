@@ -37,15 +37,15 @@ Dialog {
             width: parent.width
 
             DialogHeader {
-                acceptText: "Save changes"
+                acceptText: qsTr("Save changes")
             }
 
             TextField {
                 id: nameField
                 width: parent.width
                 text: editAccountName
-                placeholderText: "Account name"
-                label: "Account name"
+                placeholderText: qsTr("Account name")
+                label: qsTr("Account name")
                 inputMethodHints: Qt.ImhNoPredictiveText
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
                 EnterKey.enabled: text.length > 0
@@ -70,7 +70,7 @@ Dialog {
                 width: parent.width - Theme.paddingLarge*2
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeSmall
-                text: "Enter provided key, must be atleast 16 chars long and may contain spaces"
+                text: qsTr("Enter provided key, must be atleast 16 chars long and may contain spaces")
                 wrapMode: Text.WordWrap
             }
 
@@ -84,8 +84,8 @@ Dialog {
                 id: keyField
                 width: parent.width
                 text: editAccountKey
-                placeholderText: "Account key"
-                label: "Account key"
+                placeholderText: qsTr("Account key")
+                label: qsTr("Account key")
                 inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
                 EnterKey.enabled: text.length > 0 && canAccept
@@ -108,12 +108,12 @@ Dialog {
             ComboBox {
                 id: typeComboBox
                 width: parent.width
-                label: "Account type"
+                label: qsTr("Account type")
                 currentIndex: editAccountType == "TOTP" ? 0 : 1
 
                 menu: ContextMenu {
-                    MenuItem { text: "Time-based" }
-                    MenuItem { text: "Counter-based" }
+                    MenuItem { text: qsTr("Time-based") }
+                    MenuItem { text: qsTr("Counter-based") }
                 }
 
                 onCurrentIndexChanged: {
@@ -133,8 +133,8 @@ Dialog {
                 text: editAccountCounter
                 width: parent.width
                 inputMethodHints: Qt.ImhFormattedNumbersOnly
-                label: "Counter value"
-                placeholderText: "Counter value"
+                label: qsTr("Counter value")
+                placeholderText: qsTr("Counter value")
                 visible: typeComboBox.currentIndex == 1 ? true : false
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
                 EnterKey.enabled: parseInt(text,10) >= 1
@@ -164,7 +164,7 @@ Dialog {
                     width: parent.width - Theme.paddingLarge*2
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: "Below is a scannable QR code that you can use if you want to import this account on another device:"
+                    text: qsTr("Below is a scannable QR code that you can use if you want to import this account on another device:")
                     wrapMode: Text.WordWrap
                 }
 

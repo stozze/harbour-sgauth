@@ -46,6 +46,20 @@ HEADERS += \
 RESOURCES += \
     harbour-sgauth.qrc
 
+i18n.files = i18n/*.qm
+i18n.path = /usr/share/$${TARGET}/i18n
+
+INSTALLS += i18n
+
+lupdate_only {
+    SOURCES += qml/*.qml \
+              qml/pages/*.qml \
+              qml/cover/*.qml \
+              qml/dialogs/*.qml
+
+    TRANSLATIONS += i18n/harbour-sgauth-en.ts \
+                   i18n/harbour-sgauth-ru.ts
+}
 
 include(src/qzxing/QZXing.pri)
 include(src/qqrencode/qqrencode.pri)

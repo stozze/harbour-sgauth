@@ -11,17 +11,17 @@ Page {
 
         PageHeader {
             id: header
-            title: "About SGAuth v0.4-1"
+            title: qsTr("About SGAuth v%1").arg("0.4-2")
         }
 
         Text {
-            text: "This is just a simple application that generates TOTP and HOTP passcodes (like Google Authenticator). "+
-                  "The QR code scanning feature is still experimental and may not work as expected."+
+            text: qsTr("This is just a simple application that generates TOTP and HOTP passcodes (like Google Authenticator).")+
+                  qsTr("The QR code scanning feature is still experimental and may not work as expected.")+
                   "\n\n"+
-                  "Source code is available on GitHub:\n"+
+                  qsTr("Source code is available on GitHub:")+"\n"+
                   "https://github.com/stozze/harbour-sgauth"+
                   "\n\n"+
-                  "Feel free to report issues or contribute via GitHub."+
+                  qsTr("Feel free to report issues or contribute via GitHub.")+
                   "\n\n"+
                   "Stozze <stozze@rambolo.net>\n"+
                   "http://www.rambolo.net"
@@ -33,7 +33,9 @@ Page {
         }
 
         Text {
-            text: "\n\nSGAuth-icon comes from VisualPharm\nhttp://www.visualpharm.com"
+            text: "\n\n"+
+                  qsTr("SGAuth-icon comes from VisualPharm")+
+                  "\nhttp://www.visualpharm.com"
             color: Theme.secondaryColor
             x: Theme.paddingLarge
             font.pixelSize: Theme.fontSizeExtraSmall

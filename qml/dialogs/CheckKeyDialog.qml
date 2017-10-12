@@ -13,7 +13,7 @@ Dialog {
         width: parent.width - Theme.paddingLarge*2
 
         DialogHeader {
-            acceptText: "Integrity check value"
+            acceptText: qsTr("Integrity check value")
             width: parent.width
         }
 
@@ -22,8 +22,7 @@ Dialog {
             width: parent.width - Theme.paddingLarge*2
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeSmall
-            text: "To check that you have the correct key value for " + keyCheckName + ", " +
-                  "verify that the value here matches the integrity check value provided by the server:"
+            text: qsTr("To check that you have the correct key value for %1, verify that the value here matches the integrity check value provided by the server:").arg(keyCheckName)
             wrapMode: Text.WordWrap
         }
 
@@ -38,7 +37,7 @@ Dialog {
             width: parent.width - Theme.paddingLarge*2
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeMedium
-            text: "Value: " + keyCheckPasscode
+            text: qsTr("Value: %1").arg(keyCheckPasscode)
         }
 
         Rectangle {
@@ -52,7 +51,7 @@ Dialog {
             width: parent.width - Theme.paddingLarge*2
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeMedium
-            text: "Counter: " + keyCheckCounter
+            text: qsTr("Counter: %1").arg(keyCheckCounter)
         }
     }
 }

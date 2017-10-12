@@ -59,7 +59,7 @@ CoverBackground {
         id: coverLabel
         anchors.horizontalCenter: parent.horizontalCenter
         y: Theme.paddingMedium
-        text: "SGAuth"
+        text: qsTr("SGAuth")
         color: Theme.highlightColor
     }
 

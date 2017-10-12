@@ -14,7 +14,7 @@ Dialog {
         width: parent.width - Theme.paddingLarge*2
 
         DialogHeader {
-            acceptText: "Add new account"
+            acceptText: qsTr("Add new account")
             width: parent.width
         }
 
@@ -22,8 +22,8 @@ Dialog {
             id: nameField
             text: newAccountName
             width: parent.width
-            placeholderText: "Account name"
-            label: "Account name"
+            placeholderText: qsTr("Account name")
+            label: qsTr("Account name")
             inputMethodHints: Qt.ImhNoPredictiveText
             focus: true
             EnterKey.iconSource: "image://theme/icon-m-enter-next"
@@ -42,7 +42,7 @@ Dialog {
             width: parent.width - Theme.paddingLarge*2
             color: Theme.secondaryColor
             font.pixelSize: Theme.fontSizeSmall
-            text: "Enter provided key, must be atleast 16 chars long and may contain spaces"
+            text: qsTr("Enter provided key, must be atleast 16 chars long and may contain spaces")
             wrapMode: Text.WordWrap
         }
 
@@ -56,8 +56,8 @@ Dialog {
             id: keyField
             text: newAccountKey
             width: parent.width
-            placeholderText: "Account key"
-            label: "Account key"
+            placeholderText: qsTr("Account key")
+            label: qsTr("Account key")
             inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase
             EnterKey.iconSource: typeComboBox.currentIndex == 1 ? "image://theme/icon-m-enter-next" : "image://theme/icon-m-enter-close"
             EnterKey.enabled: text.length >= 16
@@ -76,12 +76,12 @@ Dialog {
         ComboBox {
             id: typeComboBox
             width: parent.width
-            label: "Account type"
+            label: qsTr("Account type")
             currentIndex: newAccountType == "TOTP" ? 0 : 1
 
             menu: ContextMenu {
-                MenuItem { text: "Time-based" }
-                MenuItem { text: "Counter-based" }
+                MenuItem { text: qsTr("Time-based") }
+                MenuItem { text: qsTr("Counter-based") }
             }
         }
 
@@ -97,8 +97,8 @@ Dialog {
             text: newAccountCounter
             width: parent.width
             inputMethodHints: Qt.ImhFormattedNumbersOnly
-            label: "Counter initial value"
-            placeholderText: "Counter initial value"
+            label: qsTr("Counter initial value")
+            placeholderText: qsTr("Counter initial value")
             visible: typeComboBox.currentIndex == 1 ? true : false
             EnterKey.iconSource: "image://theme/icon-m-enter-close"
             EnterKey.enabled: parseInt(text,10) >= 1
