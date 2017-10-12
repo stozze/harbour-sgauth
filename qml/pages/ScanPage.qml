@@ -12,7 +12,7 @@ Page {
         PullDownMenu {
             MenuItem {
                 id: scanAgainMenu
-                text: "Scan again"
+                text: qsTr("Scan again")
                 enabled: false
                 onClicked: {
                     scanpage.startScanningNow();
@@ -26,7 +26,7 @@ Page {
 
             PageHeader {
                 id: header
-                title: "QR code scanner"
+                title: qsTr("QR code scanner")
             }
 
             Text {
@@ -56,7 +56,7 @@ Page {
         target: BarcodeScanner
         onBarcodeFound: {
             appwindow.activate();
-            statusText.text = "Found code!"
+            statusText.text = qsTr("Found code!")
             scanAgainMenu.enabled = true
 
             pageStack.navigateBack(PageStackAction.Immediate);
@@ -71,13 +71,13 @@ Page {
         */
         onBarcodeNotFound: {
             appwindow.activate();
-            statusText.text = "No code was found!"
+            statusText.text = qsTr("No code was found!")
             scanAgainMenu.enabled = true
         }
     }
 
     function startScanningNow() {
-        statusText.text = "Scan in progress!\n\nUse the viewfinder of the camera application to focus on a QR code.\n\nThis feature is still experimental and may not work as expected."
+        statusText.text = qsTr("Scan in progress!\n\nUse the viewfinder of the camera application to focus on a QR code.\n\nThis feature is still experimental and may not work as expected.")
         BarcodeScanner.startScanning();
         scanAgainMenu.enabled = false
 

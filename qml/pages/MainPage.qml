@@ -88,13 +88,13 @@ Page {
         // Pulldown menu
         PullDownMenu {
             MenuItem {
-                text: "About"
+                text: qsTr("About")
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
                 }
             }
             MenuItem {
-                text: "Add new account"
+                text: qsTr("Add new account")
                 onClicked: {
                     var addNewDialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddNewAccountDialog.qml"));
 
@@ -106,13 +106,13 @@ Page {
                 }
             }
             MenuItem {
-                text: "Scan QR code (experimental)"
+                text: qsTr("Scan QR code (experimental)")
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("ScanPage.qml"));
                 }
             }
             MenuItem {
-                text: "Refresh now"
+                text: qsTr("Refresh now")
                 onClicked: mainpage.refreshPasscodes()
                 visible: accountsWrapper.visible && mainpage.hasTOTPAccounts
             }
@@ -120,7 +120,7 @@ Page {
 
         PageHeader {
             id: pageHeader
-            title: "SGAuth"
+            title: qsTr("SGAuth")
         }
 
         Column {
@@ -131,7 +131,7 @@ Page {
 
             Text {
                 id: noAccountsWrapper
-                text: "No accounts found, pull down to add new accounts."
+                text: qsTr("No accounts found, pull down to add new accounts.")
                 color: Theme.secondaryColor
                 visible: !accountsWrapper.visible
                 width: parent.width
@@ -150,7 +150,7 @@ Page {
                     value: QGoogleAuth.timeLeft()
                     valueText: value
                     width: parent.width
-                    label: "Time left"
+                    label: qsTr("Time left")
                     visible: mainpage.hasTOTPAccounts ? true : false
                 }
 
@@ -165,7 +165,7 @@ Page {
                     id: helperText
                     color: Theme.secondaryColor
                     font.pixelSize: Theme.fontSizeSmall
-                    text: "Enter this verification code if prompted during account sign-in:"
+                    text: qsTr("Enter this verification code if prompted during account sign-in:")
                     wrapMode: Text.WordWrap
                     width: parent.width
                 }
@@ -297,36 +297,36 @@ Page {
                     id: contextMenu
                     ContextMenu {
                         MenuItem {
-                            text: "Copy to clipboard"
+                            text: qsTr("Copy to clipboard")
                             onClicked: {
                                 Clipboard.text = accountPasscode
                             }
                         }
                         MenuItem {
-                            text: "Move up"
+                            text: qsTr("Move up")
                             onClicked: {
                                 moveUp()
                             }
                             visible: index > 0
                         }
                         MenuItem {
-                            text: "Move down"
+                            text: qsTr("Move down")
                             onClicked: {
                                 moveDown()
                             }
                             visible: index < accountsModel.count-1
                         }
                         MenuItem {
-                            text: "Check key value"
+                            text: qsTr("Check key value")
                             visible: accountType == 'HOTP' ? true : false
                             onClicked: keycheck()
                         }
                         MenuItem {
-                            text: "Edit"
+                            text: qsTr("Edit")
                             onClicked: edit()
                         }
                         MenuItem {
-                            text: "Remove"
+                            text: qsTr("Remove")
                             onClicked: remove()
                         }
                     }

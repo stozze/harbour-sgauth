@@ -1,7 +1,7 @@
 Name: harbour-sgauth
 Summary: SGAuth
 Version: 0.4
-Release: 1
+Release: 2
 Group: Qt/Qt
 URL: http://example.org/
 License: LICENSE
@@ -22,6 +22,7 @@ Requires:
 Files:
 - '%{_bindir}'
 - '%{_datadir}/%{name}/qml'
+- '%{_datadir}/%{name}/i18n'
 - '%{_datadir}/applications/%{name}.desktop'
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
 - /usr/bin

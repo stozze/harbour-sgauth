@@ -74,6 +74,11 @@ int main(int argc, char *argv[])
     app->setOrganizationDomain("");
     app->setApplicationName("harbour-sgauth");
 
+    QString locale = "harbour-sgauth-" + QLocale::system().name();
+    QTranslator translator;
+    translator.load(locale,SailfishApp::pathTo(QString("i18n")).toLocalFile());
+    app->installTranslator(&translator);
+
     qmlRegisterSingletonType<QGoogleAuth>("harbour.sgauth.QGoogleAuth", 1, 0, "QGoogleAuth", google_auth_singleton_provider);
     qmlRegisterSingletonType<BarcodeScanner>("harbour.sgauth.BarcodeScanner", 1, 0, "BarcodeScanner", barcode_scanner_singleton_provider);
     qmlRegisterSingletonType<BarcodeWriter>("harbour.sgauth.BarcodeWriter", 1, 0, "BarcodeWriter", barcode_writer_singleton_provider);
